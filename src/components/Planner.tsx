@@ -4,31 +4,35 @@ import { useEffect, useState } from "react";
 import Chip from "@/components/Chip";
 import CourseCard from "@/components/CourseCard";
 import LoadingCourses from "@/components/LoadingCourses";
-import type { Budget, Course, Mood } from "@/lib/course";
+import { ACTIVITIES, ACTIVITY_INFO, type Activity, type Budget, type Course } from "@/lib/course";
 import { shareCourse } from "@/lib/share";
 import { newId, store } from "@/lib/storage";
 import { nextRequestCount, track } from "@/lib/track";
 
-const HOURS = [2, 3, 4, 6, 8];
+const MAX_ACTIVITIES = 3;
 
-const MOOD_OPTIONS: { value: Mood; label: string }[] = [
-  { value: "회복", label: "온전한 휴식" },
-  { value: "재미", label: "설레는 하루" },
-  { value: "성취", label: "새로운 배움" },
-  { value: "혼자만의 시간", label: "나만의 시간" },
-];
+// 시간 바를 움직일 때 함께 보여 주는, 그 시간에 들어가는 일의 예
+function hoursHint(h: number) {
+  if (h <= 1) return "카페 한 잔, 짧은 산책";
+  if (h === 2) return "식사 한 끼, 네일 케어 하나";
+  if (h === 3) return "식사와 카페, 또는 영화 한 편";
+  if (h === 4) return "클래스와 식사, 또는 마사지와 카페";
+  if (h <= 6) return "두세 곳을 여유 있게";
+  if (h < 10) return "반나절 나들이";
+  return "하루를 온전히 나에게";
+}
 
 const BUDGET_OPTIONS: { value: Budget; label: string }[] = [
   { value: "0원", label: "무료" },
-  { value: "3만원 이하", label: "3만원" },
+  { value: "5만원 이하", label: "5만원" },
   { value: "10만원 이하", label: "10만원" },
   { value: "상관없음", label: "마음껏" },
 ];
 
 export default function Planner() {
   const [hours, setHours] = useState(4);
-  const [mood, setMood] = useState<Mood>("회복");
-  const [budget, setBudget] = useState<Budget>("3만원 이하");
+  const [activities, setActivities] = useState<Activity[]>(["쉼"]);
+  const [budget, setBudget] = useState<Budget>("5만원 이하");
   const [area, setArea] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,6 +41,15 @@ export default function Planner() {
   const [sample, setSample] = useState(false);
 
   useEffect(() => setArea(store.lastArea()), []);
+
+  const mood = activities.map((a) => ACTIVITY_INFO[a].label).join(", ");
+
+  function toggleActivity(a: Activity) {
+    setActivities((cur) => {
+      if (cur.includes(a)) return cur.length > 1 ? cur.filter((x) => x !== a) : cur;
+      return cur.length < MAX_ACTIVITIES ? [...cur, a] : [...cur.slice(1), a];
+    });
+  }
 
   async function plan() {
     if (!area.trim()) {
@@ -62,7 +75,7 @@ export default function Planner() {
       const res = await fetch("/api/courses", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hours, mood, budget, area: area.trim(), bucket, now: new Date().toISOString() }),
+        body: JSON.stringify({ hours, activities, budget, area: area.trim(), bucket, now: new Date().toISOString() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "다시 시도해 주세요");
@@ -103,20 +116,34 @@ export default function Planner() {
       </header>
 
       <Question title="주어진 시간">
-        <div className="grid grid-cols-5 gap-2">
-          {HOURS.map((h) => (
-            <Chip key={h} selected={hours === h} onClick={() => setHours(h)}>
-              {h}시간
-            </Chip>
-          ))}
+        <div className="rounded-3xl border border-line bg-card px-5 py-4">
+          <div className="flex items-baseline justify-between">
+            <p className="font-serif text-2xl text-accent">{hours >= 10 ? "종일" : `${hours}시간`}</p>
+            <p className="text-xs text-muted">{hoursHint(hours)}</p>
+          </div>
+          <input
+            type="range"
+            min={1}
+            max={10}
+            step={1}
+            value={hours}
+            onChange={(e) => setHours(Number(e.target.value))}
+            aria-label="주어진 시간"
+            className="mt-3 w-full accent-[var(--accent)]"
+          />
+          <div className="mt-1 flex justify-between text-[11px] text-muted">
+            <span>1시간</span>
+            <span>5시간</span>
+            <span>종일</span>
+          </div>
         </div>
       </Question>
 
-      <Question title="오늘의 기분">
+      <Question title="하고 싶은 것" note="세 가지까지">
         <div className="grid grid-cols-2 gap-2">
-          {MOOD_OPTIONS.map((m) => (
-            <Chip key={m.value} big selected={mood === m.value} onClick={() => setMood(m.value)}>
-              {m.label}
+          {ACTIVITIES.map((a) => (
+            <Chip key={a} big selected={activities.includes(a)} onClick={() => toggleActivity(a)}>
+              {ACTIVITY_INFO[a].label}
             </Chip>
           ))}
         </div>
@@ -143,13 +170,13 @@ export default function Planner() {
         />
       </Question>
 
-      <div>
+      <div className="sticky bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-[5]">
         {error && <p className="mb-2 text-center text-sm text-accent">{error}</p>}
         <button
           type="button"
           onClick={plan}
           disabled={loading}
-          className="w-full rounded-full bg-accent py-4 font-semibold tracking-wide text-white disabled:opacity-60"
+          className="w-full rounded-full bg-accent py-4 font-semibold tracking-wide text-white shadow-lg shadow-accent/20 disabled:opacity-60"
         >
           {loading ? "당신만의 코스를 준비하고 있어요" : "나만의 코스 추천받기"}
         </button>
@@ -198,10 +225,13 @@ export default function Planner() {
   );
 }
 
-function Question({ title, children }: { title: string; children: React.ReactNode }) {
+function Question({ title, note, children }: { title: string; note?: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 text-[13px] tracking-wide text-muted">{title}</h2>
+      <h2 className="mb-3 text-[13px] tracking-wide text-muted">
+        {title}
+        {note && <span className="ml-2 text-[11px] opacity-70">{note}</span>}
+      </h2>
       {children}
     </section>
   );

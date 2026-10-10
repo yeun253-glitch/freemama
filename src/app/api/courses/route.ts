@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import { NextResponse } from "next/server";
-import { CoursesResponseSchema, PlanRequestSchema, type PlanRequest } from "@/lib/course";
+import { CoursesResponseSchema, ACTIVITY_INFO, PlanRequestSchema, type PlanRequest } from "@/lib/course";
 import { sampleCourses } from "@/lib/sample";
 
 export const runtime = "nodejs";
@@ -29,7 +29,8 @@ function overLimit(ip: string) {
 const SYSTEM = `너는 "자유부인" 앱의 코스 플래너다. 육아 중인 엄마가 아이를 맡기고 어렵게 얻은 자유 시간을 후회 없이 쓰도록, 바로 실행할 수 있는 코스를 짜 준다.
 
 규칙:
-- 코스는 정확히 3개. 성격이 서로 달라야 한다: 하나는 차분한, 하나는 활동적인, 하나는 새로운 경험.
+- 코스는 정확히 3개. 세 코스 모두 사용자가 고른 활동이 중심이어야 한다. 여러 개를 골랐다면 한 코스 안에 자연스럽게 엮고, 코스마다 조합이나 장소를 다르게 한다. 고르지 않은 종류의 활동은 짧은 이동이나 휴식 정도만 곁들인다.
+- 각 활동에 보통 걸리는 시간을 참고해서, 주어진 시간 안에 무리 없이 들어가는 만큼만 담는다.
 - 코스당 단계는 3~4개. 마지막 단계는 "귀가".
 - 각 코스의 단계 시간(이동 포함) 합계는 주어진 자유 시간을 넘지 않는다. 마지막 20~30분은 귀가 이동으로 남긴다.
 - 총비용은 예산을 넘지 않는다. "0원"이면 모든 단계가 무료여야 한다.
@@ -52,8 +53,8 @@ function buildPrompt(req: PlanRequest) {
 
   const lines = [
     `지금: ${kst} (한국 시간)`,
-    `자유 시간: ${req.hours}시간 (이동 포함)`,
-    `오늘 필요한 것: ${req.mood}`,
+    `자유 시간: ${req.hours >= 10 ? "하루 종일, 약 10시간" : `${req.hours}시간`} (이동 포함)`,
+    `하고 싶은 것: ${req.activities.map((a) => `${ACTIVITY_INFO[a].label} (${ACTIVITY_INFO[a].guide})`).join(" / ")}`,
     `예산: ${req.budget}`,
     `지역: ${req.area} 근처`,
   ];
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
 
   // API 키를 넣기 전에도 화면을 시험해 볼 수 있도록 예시 코스를 돌려준다
   if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({ courses: sampleCourses(parsed.data.area), sample: true });
+    return NextResponse.json({ courses: sampleCourses(parsed.data.area, parsed.data.activities), sample: true });
   }
 
   try {
