@@ -15,8 +15,6 @@ export type SavedCourse = {
 
 export type Review = {
   rating: number;
-  actualCost: number;
-  memo: string;
   reviewedAt: string;
 };
 

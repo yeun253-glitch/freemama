@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  { href: "/", label: "오늘의 자유", icon: "☀️" },
-  { href: "/saved", label: "저장한 코스", icon: "🔖" },
-  { href: "/bucket", label: "버킷리스트", icon: "✨" },
+  { href: "/", label: "홈", icon: "☀️" },
+  { href: "/saved", label: "저장", icon: "🔖" },
+  { href: "/bucket", label: "버킷", icon: "✨" },
 ];
 
 export default function BottomNav() {

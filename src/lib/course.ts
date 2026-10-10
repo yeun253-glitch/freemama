@@ -20,19 +20,16 @@ export type PlanRequest = z.infer<typeof PlanRequestSchema>;
 export const StepSchema = z.object({
   start: z.string().describe("HH:MM, 24시간제"),
   minutes: z.number().describe("이 단계에 쓰는 시간(분), 이동 포함"),
-  activity: z.string().describe("짧은 활동 이름. 실제 가게 이름은 쓰지 않는다"),
-  detail: z.string().describe("무엇을 어떻게 하면 좋은지 한두 문장"),
+  activity: z.string().describe("15자 이내의 짧은 활동 이름. 실제 가게 이름은 쓰지 않는다"),
   cost: z.number().describe("예상 비용(원)"),
   search: z.string().describe("네이버지도에서 검색할 검색어, 예: 망원동 도예 원데이"),
 });
 
 export const CourseSchema = z.object({
-  title: z.string(),
-  concept: z.string().describe("한 줄 콘셉트"),
-  vibe: z.string().describe("차분한 / 활동적인 / 새로운 경험 중 하나"),
+  title: z.string().describe("12자 이내 제목"),
+  emoji: z.string().describe("코스를 나타내는 이모지 1개"),
   total_cost: z.number().describe("총 예상 비용(원)"),
   steps: z.array(StepSchema),
-  tip: z.string().describe("이 코스를 더 알차게 즐기는 팁 한 문장"),
 });
 
 export const CoursesResponseSchema = z.object({
