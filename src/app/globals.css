@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #fdf8f6;
+  --foreground: #2b2124;
+  --card: #ffffff;
+  --muted: #8a7a7f;
+  --line: #f0e4e1;
+  --accent: #d9667a;
+  --accent-soft: #fbe7ea;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1a1517;
+    --foreground: #f4ecee;
+    --card: #241d20;
+    --muted: #a8979c;
+    --line: #3a2f33;
+    --accent: #ee8a9b;
+    --accent-soft: #3a252a;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
