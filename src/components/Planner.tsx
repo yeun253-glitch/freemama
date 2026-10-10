@@ -9,17 +9,17 @@ import { newId, store } from "@/lib/storage";
 const HOURS = [2, 3, 4, 6, 8];
 
 const MOOD_OPTIONS: { value: Mood; label: string }[] = [
-  { value: "회복", label: "🌿 쉬기" },
-  { value: "재미", label: "🎉 놀기" },
-  { value: "성취", label: "📚 배우기" },
-  { value: "혼자만의 시간", label: "☕ 혼자" },
+  { value: "회복", label: "온전한 휴식" },
+  { value: "재미", label: "설레는 하루" },
+  { value: "성취", label: "새로운 배움" },
+  { value: "혼자만의 시간", label: "나만의 시간" },
 ];
 
 const BUDGET_OPTIONS: { value: Budget; label: string }[] = [
   { value: "0원", label: "무료" },
   { value: "3만원 이하", label: "3만원" },
   { value: "10만원 이하", label: "10만원" },
-  { value: "상관없음", label: "상관없음" },
+  { value: "상관없음", label: "마음껏" },
 ];
 
 export default function Planner() {
@@ -36,7 +36,7 @@ export default function Planner() {
 
   async function plan() {
     if (!area.trim()) {
-      setError("동네를 적어 주세요");
+      setError("머무를 동네를 알려 주세요");
       return;
     }
     setError("");
@@ -83,7 +83,7 @@ export default function Planner() {
       if (navigator.share) await navigator.share({ title: course.title, text });
       else {
         await navigator.clipboard.writeText(text);
-        alert("복사했어요");
+        alert("코스를 복사했어요");
       }
     } catch {
       // 사용자가 공유를 취소한 경우
@@ -92,9 +92,16 @@ export default function Planner() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold">오늘은 자유부인 ♡</h1>
+      <header>
+        <p className="font-serif text-sm tracking-[0.2em] text-accent">자유부인</p>
+        <h1 className="mt-2 font-serif text-[26px] leading-snug">
+          오늘은 어떤 하루를
+          <br />
+          보내고 싶으세요?
+        </h1>
+      </header>
 
-      <Question title="몇 시간?">
+      <Question title="주어진 시간">
         <div className="grid grid-cols-5 gap-2">
           {HOURS.map((h) => (
             <Chip key={h} selected={hours === h} onClick={() => setHours(h)}>
@@ -104,7 +111,7 @@ export default function Planner() {
         </div>
       </Question>
 
-      <Question title="오늘은?">
+      <Question title="오늘의 기분">
         <div className="grid grid-cols-2 gap-2">
           {MOOD_OPTIONS.map((m) => (
             <Chip key={m.value} big selected={mood === m.value} onClick={() => setMood(m.value)}>
@@ -114,7 +121,7 @@ export default function Planner() {
         </div>
       </Question>
 
-      <Question title="예산은?">
+      <Question title="예산">
         <div className="grid grid-cols-4 gap-2">
           {BUDGET_OPTIONS.map((b) => (
             <Chip key={b.value} selected={budget === b.value} onClick={() => setBudget(b.value)}>
@@ -124,14 +131,14 @@ export default function Planner() {
         </div>
       </Question>
 
-      <Question title="어디서?">
+      <Question title="동네">
         <input
           value={area}
           onChange={(e) => setArea(e.target.value)}
-          placeholder="망원동"
+          placeholder="예) 성수동"
           maxLength={40}
           aria-label="동네"
-          className="w-full rounded-2xl bg-card px-4 py-3.5 outline-none focus:ring-2 focus:ring-accent"
+          className="w-full rounded-full border border-line bg-card px-5 py-3.5 outline-none focus:border-accent"
         />
       </Question>
 
@@ -141,9 +148,9 @@ export default function Planner() {
           type="button"
           onClick={plan}
           disabled={loading}
-          className="w-full rounded-2xl bg-accent py-4 text-lg font-bold text-white disabled:opacity-60"
+          className="w-full rounded-full bg-accent py-4 font-semibold tracking-wide text-white disabled:opacity-60"
         >
-          {loading ? "짜는 중…" : "코스 짜줘"}
+          {loading ? "당신만의 코스를 준비하고 있어요" : "나만의 코스 추천받기"}
         </button>
       </div>
 
@@ -154,6 +161,7 @@ export default function Planner() {
             return (
               <CourseCard
                 key={i}
+                index={i}
                 course={course}
                 actions={
                   <>
@@ -161,14 +169,14 @@ export default function Planner() {
                       type="button"
                       onClick={() => save(course)}
                       disabled={saved}
-                      className="flex-1 rounded-xl bg-accent py-3 font-semibold text-white disabled:opacity-60"
+                      className="flex-1 rounded-full bg-accent py-3 text-sm font-semibold text-white disabled:opacity-60"
                     >
-                      {saved ? "저장됨 ✓" : "저장"}
+                      {saved ? "보관함에 담았어요" : "보관함에 담기"}
                     </button>
                     <button
                       type="button"
                       onClick={() => share(course)}
-                      className="rounded-xl bg-background px-5 py-3 font-semibold"
+                      className="rounded-full border border-line px-5 py-3 text-sm"
                     >
                       공유
                     </button>
@@ -177,8 +185,8 @@ export default function Planner() {
               />
             );
           })}
-          <button type="button" onClick={plan} disabled={loading} className="w-full py-3 text-muted">
-            ↻ 다른 코스
+          <button type="button" onClick={plan} disabled={loading} className="w-full py-3 text-sm text-muted underline underline-offset-4">
+            다른 코스 보기
           </button>
         </section>
       )}
@@ -189,7 +197,7 @@ export default function Planner() {
 function Question({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-3 font-bold">{title}</h2>
+      <h2 className="mb-3 text-[13px] tracking-wide text-muted">{title}</h2>
       {children}
     </section>
   );

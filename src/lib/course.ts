@@ -26,8 +26,7 @@ export const StepSchema = z.object({
 });
 
 export const CourseSchema = z.object({
-  title: z.string().describe("12자 이내 제목"),
-  emoji: z.string().describe("코스를 나타내는 이모지 1개"),
+  title: z.string().describe("14자 이내 제목"),
   total_cost: z.number().describe("총 예상 비용(원)"),
   steps: z.array(StepSchema),
 });

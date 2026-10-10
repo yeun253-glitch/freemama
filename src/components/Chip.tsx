@@ -11,8 +11,10 @@ export default function Chip({ selected, onClick, children, big = false }: Props
       type="button"
       onClick={onClick}
       aria-pressed={selected}
-      className={`rounded-2xl font-semibold transition ${big ? "py-4 text-base" : "py-3 text-sm"} ${
-        selected ? "bg-accent text-white" : "bg-card text-foreground"
+      className={`rounded-full border transition ${big ? "py-3.5 text-[15px]" : "py-2.5 text-sm"} ${
+        selected
+          ? "border-accent bg-accent-soft font-semibold text-accent"
+          : "border-line bg-card text-foreground"
       }`}
     >
       {children}

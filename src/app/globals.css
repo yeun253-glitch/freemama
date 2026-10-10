@@ -1,24 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #fdf8f6;
-  --foreground: #2b2124;
+  --background: #fbf7f3;
+  --foreground: #2f2a29;
   --card: #ffffff;
-  --muted: #8a7a7f;
-  --line: #f0e4e1;
-  --accent: #d9667a;
-  --accent-soft: #fbe7ea;
+  --muted: #9a8f8c;
+  --line: #eee4de;
+  --accent: #b9737f;
+  --accent-soft: #f6eaeb;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #1a1517;
-    --foreground: #f4ecee;
-    --card: #241d20;
-    --muted: #a8979c;
-    --line: #3a2f33;
-    --accent: #ee8a9b;
-    --accent-soft: #3a252a;
+    --background: #1b1718;
+    --foreground: #f3ece9;
+    --card: #252021;
+    --muted: #a59a97;
+    --line: #3a3233;
+    --accent: #dba0a9;
+    --accent-soft: #3a2a2d;
   }
 }
 
@@ -30,11 +30,13 @@
   --color-line: var(--line);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
+  --font-serif: var(--font-gowun-batang), "Nanum Myeongjo", serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  letter-spacing: -0.01em;
   -webkit-tap-highlight-color: transparent;
 }

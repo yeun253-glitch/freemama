@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { newId, store, type BucketItem } from "@/lib/storage";
 
-const EXAMPLES = ["향수 만들기", "혼자 영화", "한강 피크닉", "도예 클래스"];
+const EXAMPLES = ["나만의 향수 만들기", "혼자 보는 영화", "한강 피크닉", "도예 클래스"];
 
 export default function BucketPage() {
   const [items, setItems] = useState<BucketItem[]>([]);
@@ -25,7 +25,10 @@ export default function BucketPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">버킷리스트</h1>
+      <header>
+        <h1 className="font-serif text-[26px]">위시리스트</h1>
+        <p className="mt-1 text-sm text-muted">적어 두면 코스에 살며시 담아 드려요</p>
+      </header>
 
       <form
         onSubmit={(e) => {
@@ -37,12 +40,12 @@ export default function BucketPage() {
         <input
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="해보고 싶은 거"
+          placeholder="언젠가 해보고 싶은 것"
           maxLength={100}
-          className="flex-1 rounded-2xl bg-card px-4 py-3.5 outline-none focus:ring-2 focus:ring-accent"
+          className="flex-1 rounded-full border border-line bg-card px-5 py-3.5 outline-none focus:border-accent"
         />
-        <button type="submit" className="rounded-2xl bg-accent px-5 font-semibold text-white">
-          추가
+        <button type="submit" className="rounded-full bg-accent px-5 text-sm font-semibold text-white">
+          담기
         </button>
       </form>
 
@@ -53,7 +56,7 @@ export default function BucketPage() {
               key={ex}
               type="button"
               onClick={() => add(ex)}
-              className="rounded-full bg-card px-3 py-2 text-sm text-muted"
+              className="rounded-full border border-line bg-card px-4 py-2 text-sm text-muted"
             >
               + {ex}
             </button>
@@ -63,7 +66,7 @@ export default function BucketPage() {
 
       <ul className="space-y-2">
         {items.map((item) => (
-          <li key={item.id} className="flex items-center gap-3 rounded-2xl bg-card px-4 py-3.5">
+          <li key={item.id} className="flex items-center gap-3 rounded-2xl border border-line bg-card px-4 py-3.5">
             <input
               type="checkbox"
               checked={item.done}

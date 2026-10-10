@@ -23,13 +23,13 @@ export default function SavedPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">저장</h1>
+      <h1 className="font-serif text-[26px]">보관함</h1>
 
       {items.length === 0 && (
-        <Link href="/" className="block rounded-3xl bg-card p-10 text-center text-muted">
-          아직 없어요
+        <Link href="/" className="block rounded-3xl border border-line bg-card p-10 text-center text-sm text-muted">
+          아직 담아둔 코스가 없어요
           <br />
-          <span className="mt-2 inline-block font-semibold text-accent">코스 짜러 가기 →</span>
+          <span className="mt-3 inline-block text-accent underline underline-offset-4">오늘의 코스 찾아보기</span>
         </Link>
       )}
 
@@ -56,16 +56,16 @@ export default function SavedPage() {
                 <button
                   type="button"
                   onClick={() => setRating(item.id)}
-                  className="flex-1 rounded-xl bg-accent py-3 font-semibold text-white"
+                  className="flex-1 rounded-full bg-accent py-3 text-sm font-semibold text-white"
                 >
                   다녀왔어요
                 </button>
                 <button
                   type="button"
-                  onClick={() => confirm("삭제할까요?") && update(items.filter((i) => i.id !== item.id))}
-                  className="rounded-xl bg-background px-5 py-3 font-semibold"
+                  onClick={() => confirm("이 코스를 보관함에서 지울까요?") && update(items.filter((i) => i.id !== item.id))}
+                  className="rounded-full border border-line px-5 py-3 text-sm"
                 >
-                  삭제
+                  지우기
                 </button>
               </>
             )
