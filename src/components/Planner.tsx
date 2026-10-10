@@ -9,26 +9,27 @@ import { shareCourse } from "@/lib/share";
 import { newId, store } from "@/lib/storage";
 import { nextRequestCount, track } from "@/lib/track";
 
-const HOURS = [2, 3, 4, 6, 8];
+const HOURS = [1, 2, 3, 4, 5, 6, 8, 10];
 
 const MOOD_OPTIONS: { value: Mood; label: string }[] = [
-  { value: "회복", label: "온전한 휴식" },
-  { value: "재미", label: "설레는 하루" },
-  { value: "성취", label: "새로운 배움" },
-  { value: "혼자만의 시간", label: "나만의 시간" },
+  { value: "휴식", label: "온전한 휴식" },
+  { value: "케어", label: "나를 가꾸는 시간" },
+  { value: "배움", label: "새로운 배움" },
+  { value: "나들이", label: "좋은 곳 나들이" },
+  { value: "쇼핑", label: "나를 위한 쇼핑" },
 ];
 
 const BUDGET_OPTIONS: { value: Budget; label: string }[] = [
   { value: "0원", label: "무료" },
-  { value: "3만원 이하", label: "3만원" },
+  { value: "5만원 이하", label: "5만원" },
   { value: "10만원 이하", label: "10만원" },
   { value: "상관없음", label: "마음껏" },
 ];
 
 export default function Planner() {
   const [hours, setHours] = useState(4);
-  const [mood, setMood] = useState<Mood>("회복");
-  const [budget, setBudget] = useState<Budget>("3만원 이하");
+  const [mood, setMood] = useState<Mood>("휴식");
+  const [budget, setBudget] = useState<Budget>("5만원 이하");
   const [area, setArea] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -103,10 +104,10 @@ export default function Planner() {
       </header>
 
       <Question title="주어진 시간">
-        <div className="grid grid-cols-5 gap-2">
+        <div className="grid grid-cols-4 gap-2">
           {HOURS.map((h) => (
             <Chip key={h} selected={hours === h} onClick={() => setHours(h)}>
-              {h}시간
+              {h === 10 ? "종일" : `${h}시간`}
             </Chip>
           ))}
         </div>
@@ -114,8 +115,12 @@ export default function Planner() {
 
       <Question title="오늘의 기분">
         <div className="grid grid-cols-2 gap-2">
-          {MOOD_OPTIONS.map((m) => (
-            <Chip key={m.value} big selected={mood === m.value} onClick={() => setMood(m.value)}>
+          {MOOD_OPTIONS.map((m, i) => (
+            <Chip
+              key={m.value}
+              big
+              className={i === MOOD_OPTIONS.length - 1 && MOOD_OPTIONS.length % 2 ? "col-span-2" : ""}
+              selected={mood === m.value} onClick={() => setMood(m.value)}>
               {m.label}
             </Chip>
           ))}

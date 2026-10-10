@@ -1,7 +1,16 @@
 import { z } from "zod";
 
-export const MOODS = ["회복", "재미", "성취", "혼자만의 시간"] as const;
-export const BUDGETS = ["0원", "3만원 이하", "10만원 이하", "상관없음"] as const;
+export const MOODS = ["휴식", "케어", "배움", "나들이", "쇼핑"] as const;
+export const BUDGETS = ["0원", "5만원 이하", "10만원 이하", "상관없음"] as const;
+
+// 기분 유형마다 어떤 활동으로 코스를 채우는지 (추천 프롬프트에 그대로 들어감)
+export const MOOD_GUIDE: Record<(typeof MOODS)[number], string> = {
+  휴식: "아무것도 하지 않고 쉬기. 조용한 카페, 산책, 공원 벤치, 낮잠, 책 읽기처럼 정적인 활동",
+  케어: "몸과 마음 돌보기. 마사지, 스파, 사우나, 네일, 헤어, 피부 관리처럼 나를 가꾸는 활동",
+  배움: "무언가 배우고 만들기. 원데이 클래스, 공방, 쿠킹 클래스, 강연, 서점 탐방",
+  나들이: "좋은 곳 다녀오기. 전시, 맛집, 분위기 좋은 카페, 전망 좋은 곳, 동네 명소",
+  쇼핑: "나를 위해 사기. 편집숍, 소품숍, 옷, 화장품, 꽃, 빈티지숍 구경과 구매",
+};
 
 export type Mood = (typeof MOODS)[number];
 export type Budget = (typeof BUDGETS)[number];
