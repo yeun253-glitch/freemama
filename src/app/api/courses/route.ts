@@ -79,7 +79,8 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!process.env.ANTHROPIC_API_KEY && process.env.NODE_ENV !== "production") {
+  // API 키를 넣기 전에도 화면을 시험해 볼 수 있도록 예시 코스를 돌려준다
+  if (!process.env.ANTHROPIC_API_KEY) {
     return NextResponse.json({ courses: sampleCourses(parsed.data.area), sample: true });
   }
 

@@ -34,6 +34,7 @@ export default function Planner() {
   const [error, setError] = useState("");
   const [courses, setCourses] = useState<Course[]>([]);
   const [savedTitles, setSavedTitles] = useState<string[]>([]);
+  const [sample, setSample] = useState(false);
 
   useEffect(() => setArea(store.lastArea()), []);
 
@@ -66,6 +67,7 @@ export default function Planner() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "다시 시도해 주세요");
       setCourses(data.courses);
+      setSample(Boolean(data.sample));
       requestAnimationFrame(() =>
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth" }),
       );
@@ -157,6 +159,7 @@ export default function Planner() {
 
       {courses.length > 0 && (
         <section id="results" className="space-y-4">
+          {sample && <p className="text-center text-xs text-muted">지금은 예시 코스를 보여드리고 있어요</p>}
           {courses.map((course, i) => {
             const saved = savedTitles.includes(course.title);
             return (

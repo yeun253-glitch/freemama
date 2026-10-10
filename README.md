@@ -22,6 +22,13 @@ cp .env.example .env.local   # ANTHROPIC_API_KEY 입력
 npm run dev                  # http://localhost:3000
 ```
 
+`ANTHROPIC_API_KEY`가 없으면 예시 코스가 나온다 (화면 확인용).
+
+## 브랜치
+
+- `dev`: 작업 브랜치. 여기서 고치고 미리보기로 확인한다.
+- `main`: 출시용. dev에서 확인이 끝나면 합친다.
+
 ## 배포 (Vercel)
 
 1. Vercel에서 이 저장소를 Import
