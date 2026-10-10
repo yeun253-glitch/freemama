@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import CourseCard from "@/components/CourseCard";
 import { store, type SavedCourse } from "@/lib/storage";
+import { track } from "@/lib/track";
 
 export default function SavedPage() {
   const [items, setItems] = useState<SavedCourse[]>([]);
@@ -19,6 +20,7 @@ export default function SavedPage() {
   function rate(id: string, stars: number) {
     update(items.map((i) => (i.id === id ? { ...i, review: { rating: stars, reviewedAt: new Date().toISOString() } } : i)));
     setRating(null);
+    track("course_rated", { rating: stars });
   }
 
   return (

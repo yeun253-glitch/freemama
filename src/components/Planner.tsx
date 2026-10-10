@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Chip from "@/components/Chip";
 import CourseCard from "@/components/CourseCard";
+import LoadingCourses from "@/components/LoadingCourses";
 import type { Budget, Course, Mood } from "@/lib/course";
+import { shareCourse } from "@/lib/share";
 import { newId, store } from "@/lib/storage";
+import { nextRequestCount, track } from "@/lib/track";
 
 const HOURS = [2, 3, 4, 6, 8];
 
@@ -44,6 +47,10 @@ export default function Planner() {
     setCourses([]);
     setSavedTitles([]);
     store.setLastArea(area.trim());
+    track("course_requested", { nth: nextRequestCount(), hours, mood, budget });
+    requestAnimationFrame(() =>
+      document.getElementById("loading")?.scrollIntoView({ behavior: "smooth", block: "center" }),
+    );
 
     const bucket = store
       .bucket()
@@ -69,25 +76,17 @@ export default function Planner() {
     }
   }
 
-  function save(course: Course) {
+  function save(course: Course, index: number) {
     store.setSaved([
       { id: newId(), savedAt: new Date().toISOString(), area: area.trim(), hours, mood, budget, course },
       ...store.saved(),
     ]);
     setSavedTitles((t) => [...t, course.title]);
+    track("course_saved", { index });
   }
 
   async function share(course: Course) {
-    const text = [`[자유부인] ${course.title}`, ...course.steps.map((s) => `${s.start} ${s.activity}`)].join("\n");
-    try {
-      if (navigator.share) await navigator.share({ title: course.title, text });
-      else {
-        await navigator.clipboard.writeText(text);
-        alert("코스를 복사했어요");
-      }
-    } catch {
-      // 사용자가 공유를 취소한 경우
-    }
+    if (await shareCourse(course)) track("course_shared", { from: "results" });
   }
 
   return (
@@ -154,6 +153,8 @@ export default function Planner() {
         </button>
       </div>
 
+      {loading && <LoadingCourses />}
+
       {courses.length > 0 && (
         <section id="results" className="space-y-4">
           {courses.map((course, i) => {
@@ -167,7 +168,7 @@ export default function Planner() {
                   <>
                     <button
                       type="button"
-                      onClick={() => save(course)}
+                      onClick={() => save(course, i)}
                       disabled={saved}
                       className="flex-1 rounded-full bg-accent py-3 text-sm font-semibold text-white disabled:opacity-60"
                     >

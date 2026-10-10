@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Gowun_Batang } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import BottomNav from "@/components/BottomNav";
 import "./globals.css";
 
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body className="antialiased">
         <main className="mx-auto min-h-dvh max-w-md px-4 pb-28 pt-6">{children}</main>
         <BottomNav />
+        <Analytics />
       </body>
     </html>
   );
